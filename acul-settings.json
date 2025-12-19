@@ -1,0 +1,55 @@
+{
+  "rendering_mode": "advanced",
+  "context_configuration": [
+    "branding.settings",
+    "branding.themes.default",
+    "screen.texts",
+    "tenant.name",
+    "tenant.friendly_name",
+    "tenant.enabled_locales"
+  ],
+  "default_head_tags_disabled": false,
+  "head_tags": [
+    {
+      "tag": "base",
+      "attributes": {
+        "href": "https://your-cdn-domain.com/"
+      }
+    },
+    {
+      "tag": "meta",
+      "attributes": {
+        "name": "viewport",
+        "content": "width=device-width, initial-scale=1"
+      }
+    },
+    {
+      "tag": "meta",
+      "attributes": {
+        "name": "description",
+        "content": "Sign in to your account"
+      }
+    },
+    {
+      "tag": "link",
+      "attributes": {
+        "rel": "stylesheet",
+        "href": "https://your-cdn-domain.com/assets/main.[hash].css"
+      }
+    },
+    {
+      "tag": "script",
+      "attributes": {
+        "src": "https://your-cdn-domain.com/assets/vendor.[hash].js",
+        "type": "module"
+      }
+    },
+    {
+      "tag": "script",
+      "attributes": {
+        "src": "https://your-cdn-domain.com/assets/main.[hash].js",
+        "type": "module"
+      }
+    }
+  ]
+}

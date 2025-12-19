@@ -442,3 +442,53 @@ body {
 .mb-lg {
   margin-bottom: var(--space-lg);
 }
+
+/* Consent Screen Styles */
+.user-info {
+  font-size: 0.875rem;
+  margin-top: var(--space-sm);
+}
+
+.permissions-section {
+  margin-bottom: var(--space-lg);
+}
+
+.permissions-title {
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-bottom: var(--space-md);
+}
+
+.permissions-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.permission-item {
+  display: flex;
+  gap: var(--space-sm);
+  align-items: start;
+}
+
+.permission-checkmark {
+  color: var(--success);
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.permission-details {
+  font-size: 0.875rem;
+}
+
+.permission-description {
+  color: var(--text-secondary);
+}
+
+.button-group {
+  display: flex;
+  gap: var(--space-md);
+}

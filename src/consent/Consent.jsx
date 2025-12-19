@@ -89,7 +89,7 @@ export const ConsentScreen = () => {
           {texts.description || `${client?.name || 'This application'} is requesting access to your account.`}
         </p>
         {user?.email && (
-          <p style={{ fontSize: '0.875rem', marginTop: 'var(--space-sm)' }}>
+          <p className="user-info">
             Logged in as <strong>{user.email}</strong>
           </p>
         )}
@@ -100,17 +100,17 @@ export const ConsentScreen = () => {
 
         {/* Permissions List */}
         {!screen?.hideScopes && screen?.scopes && screen.scopes.length > 0 && (
-          <div style={{ marginBottom: 'var(--space-lg)' }}>
-            <h3 style={{ fontSize: '0.875rem', fontWeight: '600', marginBottom: 'var(--space-md)' }}>
+          <div className="permissions-section">
+            <h3 className="permissions-title">
               {texts.scopesTitle || `${client?.name || 'This application'} will be able to:`}
             </h3>
-            <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 'var(--space-sm)' }}>
+            <ul className="permissions-list">
               {screen.scopes.map((scope) => (
-                <li key={scope.value} style={{ display: 'flex', gap: 'var(--space-sm)', alignItems: 'start' }}>
-                  <span style={{ color: 'var(--success)', fontSize: '1.2rem' }}>✓</span>
-                  <div style={{ fontSize: '0.875rem' }}>
+                <li key={scope.value} className="permission-item">
+                  <span className="permission-checkmark">✓</span>
+                  <div className="permission-details">
                     <strong>{scope.value}</strong>
-                    {scope.description && <div style={{ color: 'var(--text-secondary)' }}>{scope.description}</div>}
+                    {scope.description && <div className="permission-description">{scope.description}</div>}
                   </div>
                 </li>
               ))}
@@ -119,7 +119,7 @@ export const ConsentScreen = () => {
         )}
 
         {/* Action Buttons */}
-        <div style={{ display: 'flex', gap: 'var(--space-md)' }}>
+        <div className="button-group">
           <Button variant="secondary" fullWidth onClick={handleDeny} disabled={isLoading}>
             {texts.declineButtonText || 'Deny'}
           </Button>

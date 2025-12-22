@@ -3,6 +3,15 @@ import react from '@vitejs/plugin-react';
 import { resolve } from 'path';
 import { copyFileSync } from 'fs';
 
+// Determine which screen to build based on environment variable
+const screen = process.env.VITE_SCREEN;
+const screenEntries = {
+  'signup': resolve(__dirname, 'src/signup-entry.jsx'),
+  'login-id': resolve(__dirname, 'src/login-id-entry.jsx'),
+  'consent': resolve(__dirname, 'src/consent-entry.jsx'),
+  'accept-invitation': resolve(__dirname, 'src/accept-invitation-entry.jsx')
+};
+
 export default defineConfig({
   plugins: [react()],
   resolve: {
@@ -16,6 +25,8 @@ export default defineConfig({
   build: {
     target: 'esnext',
     rollupOptions: {
+      // Use specific screen entry if VITE_SCREEN is set, otherwise use default
+      input: screen ? screenEntries[screen] : resolve(__dirname, 'index.html'),
       output: {
         entryFileNames: (chunkInfo) => {
           if (chunkInfo.name === 'index') {
@@ -45,6 +56,9 @@ export default defineConfig({
           }
           if (id.includes('src/consent')) {
             return 'consent';
+          }
+          if (id.includes('src/accept-invitation')) {
+            return 'accept-invitation';
           }
         }
       }

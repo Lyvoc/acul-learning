@@ -6,17 +6,22 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "build:signup": "cross-env VITE_SCREEN=signup vite build",
+    "build:login-id": "cross-env VITE_SCREEN=login-id vite build",
+    "build:consent": "cross-env VITE_SCREEN=consent vite build",
+    "build:accept-invitation": "cross-env VITE_SCREEN=accept-invitation vite build",
     "preview": "vite preview",
     "serve": "npm run build && npx serve dist -p 8080 --cors"
   },
   "dependencies": {
     "@auth0/auth0-acul-js": "1.0.0",
+    "clsx": "^2.1.0",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "clsx": "^2.1.0"
+    "react-dom": "^18.3.1"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.3.3",
+    "cross-env": "^10.1.0",
     "vite": "^5.4.10"
   }
 }

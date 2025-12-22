@@ -492,3 +492,34 @@ body {
   display: flex;
   gap: var(--space-md);
 }
+
+/* Invitation Details */
+.invitation-details {
+  margin-bottom: var(--space-lg);
+  padding: var(--space-md);
+  background: var(--surface-hover);
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.detail-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.detail-label {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.detail-value {
+  font-size: 0.875rem;
+  color: var(--text);
+  font-weight: 600;
+  text-align: right;
+}

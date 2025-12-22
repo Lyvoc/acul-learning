@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import App from './App';
+import { ConsentScreen } from './consent/Consent';
+import './styles/main.css';
 
 function initApp() {
   let rootElement = document.getElementById('root');
@@ -13,7 +14,7 @@ function initApp() {
 
   ReactDOM.createRoot(rootElement).render(
     <React.StrictMode>
-      <App />
+      <ConsentScreen />
     </React.StrictMode>
   );
 }

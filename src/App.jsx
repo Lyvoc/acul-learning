@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { LoginIdScreen } from './login-id/LoginId';
 import { SignupScreen } from './signup/Signup';
 import { ConsentScreen } from './consent/Consent';
+import { AcceptInvitationScreen } from './accept-invitation/AcceptInvitation';
 import './styles/main.css';
 
 /**
@@ -9,7 +10,7 @@ import './styles/main.css';
  * Manages screen navigation for demo purposes
  */
 function App() {
-  const [currentScreen, setCurrentScreen] = useState('login-id');
+  const [currentScreen, setCurrentScreen] = useState('signup');
 
   const screens = {
     'login-id': {
@@ -26,6 +27,11 @@ function App() {
       component: ConsentScreen,
       label: 'Consent',
       description: 'Authorize permissions'
+    },
+    'accept-invitation': {
+      component: AcceptInvitationScreen,
+      label: 'Invitation',
+      description: 'Accept organization invite'
     }
   };
 

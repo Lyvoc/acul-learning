@@ -9,7 +9,6 @@
     "build:signup": "cross-env VITE_SCREEN=signup vite build",
     "build:login-id": "cross-env VITE_SCREEN=login-id vite build",
     "build:consent": "cross-env VITE_SCREEN=consent vite build",
-    "build:accept-invitation": "cross-env VITE_SCREEN=accept-invitation vite build",
     "preview": "vite preview",
     "serve": "npm run build && npx serve dist -p 8080 --cors"
   },

@@ -27,10 +27,9 @@ For building individual screens to upload to Auth0:
 
 ### Build specific screens:
 ```bash
-npm run build:signup              # Build only the signup screen
-npm run build:login-id            # Build only the login-id screen
-npm run build:consent             # Build only the consent screen
-npm run build:accept-invitation   # Build only the accept-invitation screen
+npm run build:signup      # Build only the signup screen
+npm run build:login-id    # Build only the login-id screen
+npm run build:consent     # Build only the consent screen
 ```
 
 Each build creates a `dist/` folder containing only that specific screen without the navigation selector.
@@ -47,9 +46,8 @@ These files are ready to be uploaded to Auth0 via the Management API.
 
 - **Development**: Uses [src/main.jsx](src/main.jsx) which renders [src/App.jsx](src/App.jsx) with screen selector
 - **Production**: Uses screen-specific entry files:
-  - [src/signup-entry.jsx](src/signup-entry.jsx)
-  - [src/login-id-entry.jsx](src/login-id-entry.jsx)
-  - [src/consent-entry.jsx](src/consent-entry.jsx)
-  - [src/accept-invitation-entry.jsx](src/accept-invitation-entry.jsx)
+  - [src/entries/signup-entry.jsx](src/entries/signup-entry.jsx)
+  - [src/entries/login-id-entry.jsx](src/entries/login-id-entry.jsx)
+  - [src/entries/consent-entry.jsx](src/entries/consent-entry.jsx)
 
 Each entry file renders only its specific screen component without any navigation.

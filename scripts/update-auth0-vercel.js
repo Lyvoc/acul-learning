@@ -9,9 +9,13 @@
  * 3. Updates Auth0 configuration via Management API
  */
 
-const fs = require('fs');
-const path = require('path');
-const https = require('https');
+import fs from 'fs';
+import path from 'path';
+import https from 'https';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Configuration
 const AUTH0_DOMAIN = process.env.AUTH0_DOMAIN;

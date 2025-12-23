@@ -98,13 +98,13 @@ jobs:
           cd deploy-temp
           DEPLOYMENT_URL=$(vercel deploy --prod --yes --token=${{ secrets.VERCEL_TOKEN }})
           echo "Deployed to: $DEPLOYMENT_URL"
-          echo "url=$DEPLOYMENT_URL" >> $GITHUB_OUTPUT
+          echo "url=https://acul-learning-155.vercel.app" >> $GITHUB_OUTPUT
 
       - name: 🔄 Update Auth0 Configuration
         env:
           AUTH0_DOMAIN: ${{ secrets.AUTH0_DOMAIN }}
           AUTH0_MGMT_TOKEN: ${{ secrets.AUTH0_MGMT_TOKEN }}
-          VERCEL_URL: ${{ steps.deploy.outputs.url }}
+          VERCEL_URL: https://acul-learning-155.vercel.app
         run: node scripts/update-auth0-vercel.js
 
       - name: ✅ Deployment Complete
@@ -112,7 +112,7 @@ jobs:
           echo "================================"
           echo "🎉 Deployment Successful!"
           echo "================================"
-          echo "🔗 Live URL: ${{ steps.deploy.outputs.url }}"
+          echo "🔗 Live URL: https://acul-learning-155.vercel.app"
           echo "================================"
 
       - name: 💬 Comment PR with Deployment URL
@@ -126,7 +126,7 @@ jobs:
               repo: context.repo.repo,
               body: `## 🚀 ACUL Deployed to Vercel
 
-              **Deployment URL:** ${{ steps.deploy.outputs.url }}
+              **Deployment URL:** https://acul-learning-155.vercel.app
               
               ✅ Auth0 configuration has been updated automatically.
               

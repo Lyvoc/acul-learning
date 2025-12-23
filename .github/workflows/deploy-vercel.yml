@@ -49,6 +49,8 @@ jobs:
         run: |
           mkdir -p deploy-temp
           cp -r dist/* deploy-temp/
+          # Remove any package.json that might have been copied
+          rm -f deploy-temp/package.json deploy-temp/vite.config.js
           echo "Clean deployment directory created"
           echo "Verifying vercel.json in deploy-temp:"
           cat deploy-temp/vercel.json

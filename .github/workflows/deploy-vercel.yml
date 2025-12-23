@@ -35,8 +35,40 @@ jobs:
       - name: 🏗️ Build ACUL assets
         run: npm run build
 
-      - name: 📄 Copy vercel.json to dist folder
-        run: cp vercel.json dist/vercel.json
+      - name: 📄 Create vercel.json in dist folder
+        run: |
+          cat > dist/vercel.json << 'EOF'
+          {
+            "version": 2,
+            "builds": [],
+            "cleanUrls": true,
+            "trailingSlash": false,
+            "headers": [
+              {
+                "source": "/(.*)",
+                "headers": [
+                  {
+                    "key": "Access-Control-Allow-Origin",
+                    "value": "*"
+                  },
+                  {
+                    "key": "Access-Control-Allow-Methods",
+                    "value": "GET, OPTIONS"
+                  }
+                ]
+              },
+              {
+                "source": "/assets/(.*)",
+                "headers": [
+                  {
+                    "key": "Cache-Control",
+                    "value": "public, max-age=31536000, immutable"
+                  }
+                ]
+              }
+            ]
+          }
+          EOF
 
       - name: 📋 List built assets
         run: |

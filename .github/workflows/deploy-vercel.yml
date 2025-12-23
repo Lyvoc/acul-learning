@@ -1,4 +1,4 @@
-name: Deploy ACUL to Vercel
+name: Deploy ACUL Screens to Vercel
 
 on:
   push:
@@ -12,6 +12,7 @@ on:
 env:
   VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
   VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+  VERCEL_URL: https://acul-learning-155.vercel.app
 
 jobs:
   deploy:
@@ -32,12 +33,29 @@ jobs:
       - name: 🧹 Clean dist folder
         run: rm -rf dist
 
-      - name: 🏗️ Build ACUL assets
-        run: npm run build
-
-      - name: 📄 Create vercel.json in dist folder
+      - name: 🏗️ Build Login ID screen
         run: |
-          cat > dist/vercel.json << 'EOF'
+          npm run build:login-id
+          mkdir -p dist-combined/login-id
+          cp -r dist/* dist-combined/login-id/
+
+      - name: 🏗️ Build Signup screen
+        run: |
+          rm -rf dist
+          npm run build:signup
+          mkdir -p dist-combined/signup
+          cp -r dist/* dist-combined/signup/
+
+      - name: 🏗️ Build Consent screen
+        run: |
+          rm -rf dist
+          npm run build:consent
+          mkdir -p dist-combined/consent
+          cp -r dist/* dist-combined/consent/
+
+      - name: 📄 Create vercel.json
+        run: |
+          cat > dist-combined/vercel.json << 'EOF'
           {
             "version": 2,
             "builds": [],
@@ -47,23 +65,14 @@ jobs:
               {
                 "source": "/(.*)",
                 "headers": [
-                  {
-                    "key": "Access-Control-Allow-Origin",
-                    "value": "*"
-                  },
-                  {
-                    "key": "Access-Control-Allow-Methods",
-                    "value": "GET, OPTIONS"
-                  }
+                  {"key": "Access-Control-Allow-Origin", "value": "*"},
+                  {"key": "Access-Control-Allow-Methods", "value": "GET, OPTIONS"}
                 ]
               },
               {
                 "source": "/assets/(.*)",
                 "headers": [
-                  {
-                    "key": "Cache-Control",
-                    "value": "public, max-age=31536000, immutable"
-                  }
+                  {"key": "Cache-Control", "value": "public, max-age=31536000, immutable"}
                 ]
               }
             ]
@@ -72,69 +81,60 @@ jobs:
 
       - name: 📋 List built assets
         run: |
-          echo "Built assets:"
-          ls -lah dist/assets/
-          echo "Vercel config:"
-          cat dist/vercel.json
+          echo "Combined structure:"
+          ls -lah dist-combined/
+          echo "Login ID assets:"
+          ls -lah dist-combined/login-id/assets/ || true
+          echo "Signup assets:"
+          ls -lah dist-combined/signup/assets/ || true
+          echo "Consent assets:"
+          ls -lah dist-combined/consent/assets/ || true
 
       - name: 📁 Prepare clean deployment directory
         run: |
           mkdir -p deploy-temp
-          cp -r dist/* deploy-temp/
-          # Remove any package.json that might have been copied
+          cp -r dist-combined/* deploy-temp/
           rm -f deploy-temp/package.json deploy-temp/vite.config.js
-          echo "Clean deployment directory created"
-          echo "Verifying vercel.json in deploy-temp:"
-          cat deploy-temp/vercel.json
-          echo "Files in deploy-temp:"
-          ls -la deploy-temp/
+          rm -f deploy-temp/*/package.json deploy-temp/*/vite.config.js
 
       - name: 🚀 Install Vercel CLI
         run: npm install --global vercel@latest
 
       - name: 🚢 Deploy to Vercel
-        id: deploy
         run: |
           cd deploy-temp
-          DEPLOYMENT_URL=$(vercel deploy --prod --yes --token=${{ secrets.VERCEL_TOKEN }})
-          echo "Deployed to: $DEPLOYMENT_URL"
-          echo "url=https://acul-learning-155.vercel.app" >> $GITHUB_OUTPUT
+          vercel deploy --prod --yes --token=${{ secrets.VERCEL_TOKEN }}
 
-      - name: 🔄 Update Auth0 Configuration
+      - name: 🔄 Update Auth0 Login ID Configuration
         env:
           AUTH0_DOMAIN: ${{ secrets.AUTH0_DOMAIN }}
           AUTH0_MGMT_TOKEN: ${{ secrets.AUTH0_MGMT_TOKEN }}
-          VERCEL_URL: https://acul-learning-155.vercel.app
-        run: node scripts/update-auth0-vercel.js
+          VERCEL_URL: ${{ env.VERCEL_URL }}/login-id
+          SCREEN_NAME: login-id
+        run: node scripts/update-auth0-screen.js
+
+      - name: 🔄 Update Auth0 Signup Configuration
+        env:
+          AUTH0_DOMAIN: ${{ secrets.AUTH0_DOMAIN }}
+          AUTH0_MGMT_TOKEN: ${{ secrets.AUTH0_MGMT_TOKEN }}
+          VERCEL_URL: ${{ env.VERCEL_URL }}/signup
+          SCREEN_NAME: signup
+        run: node scripts/update-auth0-screen.js
+
+      - name: 🔄 Update Auth0 Consent Configuration
+        env:
+          AUTH0_DOMAIN: ${{ secrets.AUTH0_DOMAIN }}
+          AUTH0_MGMT_TOKEN: ${{ secrets.AUTH0_MGMT_TOKEN }}
+          VERCEL_URL: ${{ env.VERCEL_URL }}/consent
+          SCREEN_NAME: consent
+        run: node scripts/update-auth0-screen.js
 
       - name: ✅ Deployment Complete
         run: |
           echo "================================"
-          echo "🎉 Deployment Successful!"
+          echo "🎉 All Screens Deployed!"
           echo "================================"
-          echo "🔗 Live URL: https://acul-learning-155.vercel.app"
+          echo "🔗 Login ID: ${{ env.VERCEL_URL }}/login-id"
+          echo "🔗 Signup: ${{ env.VERCEL_URL }}/signup"
+          echo "🔗 Consent: ${{ env.VERCEL_URL }}/consent"
           echo "================================"
-
-      - name: 💬 Comment PR with Deployment URL
-        if: github.event_name == 'pull_request'
-        uses: actions/github-script@v7
-        with:
-          script: |
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: `## 🚀 ACUL Deployed to Vercel
-
-              **Deployment URL:** https://acul-learning-155.vercel.app
-              
-              ✅ Auth0 configuration has been updated automatically.
-              
-              ### Test the deployment:
-              1. Go to your Auth0 application
-              2. Click the login button
-              3. You should see your customized ACUL screen
-              
-              ---
-              Deployment triggered by: @${{ github.actor }}`
-            })

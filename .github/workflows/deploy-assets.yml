@@ -1,4 +1,4 @@
-name: Deploy ACUL Screens to Vercel
+name: Deploy ACUL Assets to Vercel
 
 on:
   push:
@@ -30,28 +30,34 @@ jobs:
       - name: 📦 Install dependencies
         run: npm ci
 
-      - name: 🧹 Clean dist folder
-        run: rm -rf dist
+      - name: 🧹 Clean folders
+        run: rm -rf dist dist-combined
 
-      - name: 🏗️ Build Login ID screen
+      - name: 🏗️ Build and collect Login ID assets
         run: |
           npm run build:login-id
-          mkdir -p dist-combined/login-id
-          cp -r dist/* dist-combined/login-id/
+          mkdir -p dist-combined/assets
+          cp -r dist/assets/* dist-combined/assets/
+          # Save asset list for this screen
+          mkdir -p asset-tracking
+          ls dist/assets/ | grep -E '\.(js|css)$' > asset-tracking/login-id.txt
+          echo "Login ID assets:" && cat asset-tracking/login-id.txt
 
-      - name: 🏗️ Build Signup screen
+      - name: 🏗️ Build and collect Signup assets
         run: |
           rm -rf dist
           npm run build:signup
-          mkdir -p dist-combined/signup
-          cp -r dist/* dist-combined/signup/
+          cp -r dist/assets/* dist-combined/assets/
+          ls dist/assets/ | grep -E '\.(js|css)$' > asset-tracking/signup.txt
+          echo "Signup assets:" && cat asset-tracking/signup.txt
 
-      - name: 🏗️ Build Consent screen
+      - name: 🏗️ Build and collect Consent assets
         run: |
           rm -rf dist
           npm run build:consent
-          mkdir -p dist-combined/consent
-          cp -r dist/* dist-combined/consent/
+          cp -r dist/assets/* dist-combined/assets/
+          ls dist/assets/ | grep -E '\.(js|css)$' > asset-tracking/consent.txt
+          echo "Consent assets:" && cat asset-tracking/consent.txt
 
       - name: 📄 Create vercel.json
         run: |
@@ -79,23 +85,17 @@ jobs:
           }
           EOF
 
-      - name: 📋 List built assets
+      - name: 📋 List all combined assets
         run: |
-          echo "Combined structure:"
-          ls -lah dist-combined/
-          echo "Login ID assets:"
-          ls -lah dist-combined/login-id/assets/ || true
-          echo "Signup assets:"
-          ls -lah dist-combined/signup/assets/ || true
-          echo "Consent assets:"
-          ls -lah dist-combined/consent/assets/ || true
+          echo "All assets combined:"
+          ls -lah dist-combined/assets/
 
-      - name: 📁 Prepare clean deployment directory
+      - name: 📁 Prepare deployment directory
         run: |
           mkdir -p deploy-temp
           cp -r dist-combined/* deploy-temp/
+          cp -r asset-tracking deploy-temp/
           rm -f deploy-temp/package.json deploy-temp/vite.config.js
-          rm -f deploy-temp/*/package.json deploy-temp/*/vite.config.js
 
       - name: 🚀 Install Vercel CLI
         run: npm install --global vercel@latest
@@ -109,24 +109,27 @@ jobs:
         env:
           AUTH0_DOMAIN: ${{ secrets.AUTH0_DOMAIN }}
           AUTH0_MGMT_TOKEN: ${{ secrets.AUTH0_MGMT_TOKEN }}
-          VERCEL_URL: ${{ env.VERCEL_URL }}/login-id
+          VERCEL_URL: ${{ env.VERCEL_URL }}
           SCREEN_NAME: login-id
+          ASSET_LIST_FILE: asset-tracking/login-id.txt
         run: node scripts/update-auth0-screen.js
 
       - name: 🔄 Update Auth0 Signup Configuration
         env:
           AUTH0_DOMAIN: ${{ secrets.AUTH0_DOMAIN }}
           AUTH0_MGMT_TOKEN: ${{ secrets.AUTH0_MGMT_TOKEN }}
-          VERCEL_URL: ${{ env.VERCEL_URL }}/signup
+          VERCEL_URL: ${{ env.VERCEL_URL }}
           SCREEN_NAME: signup
+          ASSET_LIST_FILE: asset-tracking/signup.txt
         run: node scripts/update-auth0-screen.js
 
       - name: 🔄 Update Auth0 Consent Configuration
         env:
           AUTH0_DOMAIN: ${{ secrets.AUTH0_DOMAIN }}
           AUTH0_MGMT_TOKEN: ${{ secrets.AUTH0_MGMT_TOKEN }}
-          VERCEL_URL: ${{ env.VERCEL_URL }}/consent
+          VERCEL_URL: ${{ env.VERCEL_URL }}
           SCREEN_NAME: consent
+          ASSET_LIST_FILE: asset-tracking/consent.txt
         run: node scripts/update-auth0-screen.js
 
       - name: ✅ Deployment Complete
@@ -134,7 +137,6 @@ jobs:
           echo "================================"
           echo "🎉 All Screens Deployed!"
           echo "================================"
-          echo "🔗 Login ID: ${{ env.VERCEL_URL }}/login-id"
-          echo "🔗 Signup: ${{ env.VERCEL_URL }}/signup"
-          echo "🔗 Consent: ${{ env.VERCEL_URL }}/consent"
+          echo "🔗 Assets URL: ${{ env.VERCEL_URL }}/assets/"
+          echo "✅ Updated: login-id, signup, consent"
           echo "================================"

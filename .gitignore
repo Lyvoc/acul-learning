@@ -49,6 +49,11 @@ src/assets/
 .vercel/
 deployment-info.json
 
+# Build tracking
+asset-tracking/
+dist-combined/
+deploy-temp/
+
 # Auth0 specific
 .auth0/
 auth0-deploy-cli-state.json

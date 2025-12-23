@@ -4,7 +4,6 @@ import { Card, CardHeader, CardContent } from '@components/Card';
 import { Input } from '@components/Input';
 import { Button } from '@components/Button';
 import { ErrorMessage } from '@components/ErrorMessage';
-import logoImg from '../assets/logo.png';
 
 /**
  * Login ID Screen
@@ -114,7 +113,6 @@ export const LoginIdScreen = () => {
     <>
     <Card>
       <CardHeader
-        logo={logoImg}
         title={title}
         description="Sign in to your account to continue"
       />

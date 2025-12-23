@@ -8,6 +8,11 @@
 
 import https from 'https';
 import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Configuration
 const AUTH0_DOMAIN = process.env.AUTH0_DOMAIN;
@@ -39,12 +44,24 @@ const SCREEN_TITLES = {
 
 // Extract asset hashes from file list
 function extractHashesFromAssetList() {
-  if (!ASSET_LIST_FILE || !fs.existsSync(ASSET_LIST_FILE)) {
-    console.error(`❌ Asset list file not found: ${ASSET_LIST_FILE}`);
-    return null;
+  let assets;
+  
+  // Try to read from asset tracking file (CI environment)
+  if (ASSET_LIST_FILE && fs.existsSync(ASSET_LIST_FILE)) {
+    console.log('📄 Reading from asset tracking file:', ASSET_LIST_FILE);
+    assets = fs.readFileSync(ASSET_LIST_FILE, 'utf8').trim().split('\n');
+  } 
+  // Fallback to reading from dist/assets (local environment)
+  else {
+    const distAssetsPath = path.join(__dirname, '../dist/assets');
+    if (!fs.existsSync(distAssetsPath)) {
+      console.error(`❌ Asset folder not found: ${distAssetsPath}`);
+      console.error(`💡 Run: npm run build:${SCREEN_NAME}`);
+      return null;
+    }
+    console.log('📂 Reading from dist/assets folder');
+    assets = fs.readdirSync(distAssetsPath);
   }
-
-  const assets = fs.readFileSync(ASSET_LIST_FILE, 'utf8').trim().split('\n');
   
   // Look for {screenName}-entry.{hash}.js and {screenName}-entry.{hash}.css
   const entryPattern = `${SCREEN_NAME}-entry`;
@@ -58,12 +75,19 @@ function extractHashesFromAssetList() {
     return null;
   }
 
-  const jsHash = jsFile.match(/\.([a-zA-Z0-9]+)\.js$/)[1];
-  const cssHash = cssFile.match(/\.([a-zA-Z0-9]+)\.css$/)[1];
+  const jsMatch = jsFile.match(/\.([a-zA-Z0-9_-]+)\.js$/);
+  const cssMatch = cssFile.match(/\.([a-zA-Z0-9_-]+)\.css$/);
+  
+  if (!jsMatch || !cssMatch) {
+    console.error(`❌ Could not extract hashes from filenames`);
+    console.error('JS file:', jsFile);
+    console.error('CSS file:', cssFile);
+    return null;
+  }
 
   return {
-    jsHash,
-    cssHash,
+    jsHash: jsMatch[1],
+    cssHash: cssMatch[1],
     jsUrl: `${VERCEL_URL}/assets/${jsFile}`,
     cssUrl: `${VERCEL_URL}/assets/${cssFile}`
   };

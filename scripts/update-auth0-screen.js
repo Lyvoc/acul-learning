@@ -71,19 +71,25 @@ function extractHashesFromAssetList() {
 
 // Build Auth0 configuration object
 function buildAuth0Config(screenName, jsUrl, cssUrl) {
-  const title = SCREEN_TITLES[screenName] || screenName;
-  
   return {
-    name: screenName,
-    title: title,
-    version: 'v2',
-    library_url: jsUrl,
-    stylesheet_url: cssUrl,
-    metadata: {
-      updated_at: new Date().toISOString(),
-      deployment_url: VERCEL_URL,
-      deployment_type: 'vercel'
-    }
+    rendering_mode: 'advanced',
+    head_tags: [
+      {
+        tag: 'script',
+        attributes: {
+          src: jsUrl,
+          type: 'module',
+          defer: true
+        }
+      },
+      {
+        tag: 'link',
+        attributes: {
+          rel: 'stylesheet',
+          href: cssUrl
+        }
+      }
+    ]
   };
 }
 
@@ -93,8 +99,8 @@ function updateAuth0Screen(config) {
     const data = JSON.stringify(config);
     
     const options = {
-      hostname: AUTH0_DOMAIN,
-      path: `/api/v2/acul/screens/${config.name}`,
+      hostname: AUTH0_DOMAIN.replace('https://', ''),
+      path: `/api/v2/prompts/${SCREEN_NAME}/screen/${SCREEN_NAME}/rendering`,
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
@@ -112,11 +118,11 @@ function updateAuth0Screen(config) {
       });
       
       res.on('end', () => {
-        if (res.statusCode === 200) {
-          console.log(`✅ Successfully updated ${config.name}`);
+        if (res.statusCode === 200 || res.statusCode === 204) {
+          console.log(`✅ Successfully updated ${SCREEN_NAME}`);
           resolve(responseData);
         } else {
-          console.error(`❌ Failed to update ${config.name}:`, res.statusCode);
+          console.error(`❌ Failed to update ${SCREEN_NAME}:`, res.statusCode);
           console.error('Response:', responseData);
           reject(new Error(`HTTP ${res.statusCode}: ${responseData}`));
         }
@@ -124,7 +130,7 @@ function updateAuth0Screen(config) {
     });
 
     req.on('error', (error) => {
-      console.error(`❌ Request error for ${config.name}:`, error.message);
+      console.error(`❌ Request error for ${SCREEN_NAME}:`, error.message);
       reject(error);
     });
 
@@ -151,8 +157,11 @@ async function main() {
     // Build Auth0 configuration
     const config = buildAuth0Config(SCREEN_NAME, assetInfo.jsUrl, assetInfo.cssUrl);
 
+    console.log('\n📝 Configuration to apply:');
+    console.log(JSON.stringify(config, null, 2));
+
     // Update Auth0
-    console.log('🔄 Updating Auth0...');
+    console.log('\n🔄 Updating Auth0...');
     await updateAuth0Screen(config);
 
     console.log(`✨ ${SCREEN_NAME} screen updated successfully!`);

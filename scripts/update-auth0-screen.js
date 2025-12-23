@@ -46,17 +46,20 @@ function extractHashesFromAssetList() {
 
   const assets = fs.readFileSync(ASSET_LIST_FILE, 'utf8').trim().split('\n');
   
-  const jsFile = assets.find(f => f.match(/^index\.([a-zA-Z0-9]+)\.js$/));
-  const cssFile = assets.find(f => f.match(/^index\.([a-zA-Z0-9]+)\.css$/));
+  // Look for {screenName}-entry.{hash}.js and {screenName}-entry.{hash}.css
+  const entryPattern = `${SCREEN_NAME}-entry`;
+  const jsFile = assets.find(f => f.startsWith(entryPattern) && f.endsWith('.js'));
+  const cssFile = assets.find(f => f.startsWith(entryPattern) && f.endsWith('.css'));
 
   if (!jsFile || !cssFile) {
     console.error(`❌ Could not find JS or CSS files in asset list for ${SCREEN_NAME}`);
+    console.error('Expected pattern:', `${entryPattern}.{hash}.js/css`);
     console.error('Assets:', assets);
     return null;
   }
 
-  const jsHash = jsFile.match(/^index\.([a-zA-Z0-9]+)\.js$/)[1];
-  const cssHash = cssFile.match(/^index\.([a-zA-Z0-9]+)\.css$/)[1];
+  const jsHash = jsFile.match(/\.([a-zA-Z0-9]+)\.js$/)[1];
+  const cssHash = cssFile.match(/\.([a-zA-Z0-9]+)\.css$/)[1];
 
   return {
     jsHash,

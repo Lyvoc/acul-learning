@@ -46,6 +46,10 @@ coverage/
 # Assets
 src/assets/
 
+# Vercel
+.vercel/
+deployment-info.json
+
 # Auth0 specific
 .auth0/
 auth0-deploy-cli-state.json

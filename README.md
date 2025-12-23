@@ -318,17 +318,63 @@ const theme = loginIdManager.getCurrentThemeOptions();
 
 ## 🚀 Deployment
 
-### 1. Build Assets
+This project includes an **automated CI/CD pipeline** for deploying to Vercel with automatic Auth0 configuration updates.
+
+### Automated Deployment (Recommended)
+
+#### Quick Start
+
+1. **Link to Vercel**:
+   ```bash
+   npm run build
+   cd dist
+   vercel link
+   ```
+
+2. **Configure GitHub Secrets**:
+   - `VERCEL_TOKEN` - Your Vercel API token
+   - `VERCEL_ORG_ID` - From `.vercel/project.json`
+   - `VERCEL_PROJECT_ID` - From `.vercel/project.json`
+   - `AUTH0_DOMAIN` - Your Auth0 tenant domain
+   - `AUTH0_MGMT_TOKEN` - Auth0 Management API token
+
+3. **Push to GitHub**:
+   ```bash
+   git push origin main
+   ```
+
+The GitHub Actions workflow will automatically:
+- Build your application
+- Deploy to Vercel with CORS headers
+- Extract file hashes from the deployment
+- Update Auth0 configuration via Management API
+
+**📖 For complete setup instructions, see [DEPLOYMENT.md](DEPLOYMENT.md)**
+
+### What Gets Automated
+
+✅ Build and bundle with Vite  
+✅ Deploy to Vercel with production settings  
+✅ Configure CORS headers automatically  
+✅ Extract asset hashes from live deployment  
+✅ Update Auth0 screen configurations  
+✅ Zero manual file path updates  
+
+### Manual Deployment (Alternative)
+
+If you prefer manual deployment:
+
+#### 1. Build Assets
 
 ```bash
 npm run build
 ```
 
-### 2. Upload to CDN
+#### 2. Upload to CDN
 
 Upload `dist/` contents to your CDN (AWS S3, Cloudflare, Vercel, etc.)
 
-### 3. Configure Auth0
+#### 3. Configure Auth0
 
 Create `settings.json`:
 
@@ -366,7 +412,7 @@ Create `settings.json`:
 }
 ```
 
-### 4. Apply Configuration
+#### 4. Apply Configuration
 
 Using Auth0 CLI:
 

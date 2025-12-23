@@ -4,6 +4,7 @@ import { Card, CardHeader, CardContent } from '@components/Card';
 import { Input } from '@components/Input';
 import { Button } from '@components/Button';
 import { ErrorMessage } from '@components/ErrorMessage';
+import logoImg from '../assets/logo.png';
 
 /**
  * Signup Screen
@@ -144,7 +145,7 @@ export const SignupScreen = () => {
   return (
     <Card>
       <CardHeader
-        logo="A0"
+        logo={logoImg}
         title="Create Your Account"
         description="Sign up to get started"
       />

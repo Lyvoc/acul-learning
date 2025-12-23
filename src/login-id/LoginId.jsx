@@ -4,6 +4,7 @@ import { Card, CardHeader, CardContent } from '@components/Card';
 import { Input } from '@components/Input';
 import { Button } from '@components/Button';
 import { ErrorMessage } from '@components/ErrorMessage';
+import logoImg from '../assets/logo.png';
 
 /**
  * Login ID Screen
@@ -40,8 +41,11 @@ export const LoginIdScreen = () => {
         user: loginIdManager.user,
         tenant: loginIdManager.tenant,
         branding: loginIdManager.branding,
-        transaction: loginIdManager.transaction
+        transaction: loginIdManager.transaction,
+        client: loginIdManager.client
       };
+      console.log('Auth0 Context Data:', context);
+      console.log('Client Object:', context.client);
       setContextData(context);
       
       // Get initial errors if any
@@ -101,12 +105,17 @@ export const LoginIdScreen = () => {
 
   // Get alternate connections (social providers)
   const alternateConnections = contextData?.transaction?.alternateConnections || [];
+  
+  // Get application name from client
+  const appName = contextData?.client?.name;
+  const title = appName ? `Welcome Back to ${appName}` : 'Welcome Back';
 
   return (
+    <>
     <Card>
       <CardHeader
-        logo="A0"
-        title="Welcome Back"
+        logo={logoImg}
+        title={title}
         description="Sign in to your account to continue"
       />
 
@@ -164,6 +173,22 @@ export const LoginIdScreen = () => {
         </div>
       </CardContent>
     </Card>
+    
+    <div className="container">
+      <footer className="auth-footer">
+        <div className="footer-links">
+          <a href="#" className="footer-link">Privacy Policy</a>
+          <span className="footer-divider">•</span>
+          <a href="#" className="footer-link">Terms of Service</a>
+          <span className="footer-divider">•</span>
+          <a href="#" className="footer-link">Help Center</a>
+        </div>
+        <p className="footer-copyright">
+          © {new Date().getFullYear()} {appName || 'Your Company'}. All rights reserved.
+        </p>
+      </footer>
+    </div>
+    </>
   );
 };
 

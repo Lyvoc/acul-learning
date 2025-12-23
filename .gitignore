@@ -43,6 +43,9 @@ coverage/
 *.temp
 .cache/
 
+# Assets
+src/assets/
+
 # Auth0 specific
 .auth0/
 auth0-deploy-cli-state.json

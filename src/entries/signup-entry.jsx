@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import { SignupScreen } from './signup/Signup';
-import './styles/main.css';
+import { SignupScreen } from '../signup/Signup';
+import '../styles/main.css';
 
 function initApp() {
   let rootElement = document.getElementById('root');

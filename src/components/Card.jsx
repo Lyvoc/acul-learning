@@ -22,7 +22,11 @@ export const CardHeader = ({ logo, title, description }) => {
     <div className="card-header">
       {logo && (
         <div className="card-logo">
-          {logo}
+          {typeof logo === 'string' ? (
+            <img src={logo} alt="Logo" style={{ height: '48px', width: 'auto' }} />
+          ) : (
+            logo
+          )}
         </div>
       )}
       {title && <h1 className="card-title">{title}</h1>}
